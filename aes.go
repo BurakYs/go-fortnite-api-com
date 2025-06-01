@@ -1,0 +1,21 @@
+package fortniteapi
+
+type AESKeyParams struct {
+	// Enum: "aes", "hex"
+	//
+	// Default: "hex"
+	KeyFormat string `url:"keyFormat"`
+}
+
+type AESDynamicKey struct {
+	PakFilename string `json:"pakFilename"`
+	PakGuid     string `json:"pakGuid"`
+	Key         string `json:"key"`
+}
+
+type AESKeyResponse struct {
+	Build       string          `json:"build"`
+	MainKey     string          `json:"mainKey"`
+	DynamicKeys []AESDynamicKey `json:"dynamicKeys"`
+	Updated     string          `json:"updated"`
+}
