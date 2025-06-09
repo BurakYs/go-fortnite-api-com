@@ -2,9 +2,11 @@ package fortniteapi
 
 import (
 	"context"
+	"log"
 	"os"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,8 +18,20 @@ const (
 	testStats       = "BurakYhs"
 )
 
+func requireAPIKey(t *testing.T) {
+	if testClient.APIKey == "" {
+		t.Skip("API_KEY is not set")
+	}
+}
+
 func TestMain(m *testing.M) {
-	apiKey := ""
+	godotenv.Load()
+
+	apiKey := os.Getenv("API_KEY")
+	if apiKey == "" {
+		log.Println("API_KEY is not set in .env file, skipping tests that require it")
+	}
+
 	testClient = NewClient(LanguageEnglish, apiKey)
 	testClient.SetContext(context.TODO())
 
@@ -119,10 +133,10 @@ func TestGetSTWNews(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-/*func TestGetCreativeNews(t *testing.T) {
+func TestGetCreativeNews(t *testing.T) {
 	_, err := testClient.GetCreativeNews(nil, CreativeNewsParams{})
 	assert.NoError(t, err)
-}*/
+}
 
 func TestGetPlaylists(t *testing.T) {
 	_, err := testClient.GetPlaylists(nil, PlaylistsParams{})
@@ -142,13 +156,17 @@ func TestGetShop(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-/*func TestGetBRStats(t *testing.T) {
-	_, err := testClient.GetBRStats(nil, BRStatsByNameParams{Name: testStats})
+func TestGetBRStatsByName(t *testing.T) {
+	requireAPIKey(t)
+
+	_, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStats})
 	assert.NoError(t, err)
 }
 
 func TestGetBRStatsByAccountID(t *testing.T) {
-	stats, err := testClient.GetBRStats(nil, BRStatsByNameParams{Name: testStats})
+	requireAPIKey(t)
+
+	stats, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStats})
 	noErr := assert.NoError(t, err)
 
 	if !noErr {
@@ -158,7 +176,7 @@ func TestGetBRStatsByAccountID(t *testing.T) {
 	id := stats.Account.ID
 	_, err = testClient.GetBRStatsByAccountID(nil, id, BRStatsByIDParams{})
 	assert.NoError(t, err)
-}*/
+}
 
 func TestGetBRCosmeticByID(t *testing.T) {
 	list, err := testClient.GetBRCosmeticsList(nil, BRCosmeticsListParams{})
