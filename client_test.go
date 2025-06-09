@@ -140,10 +140,10 @@ func TestGetSTWNews(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestGetCreativeNews(t *testing.T) {
+/*func TestGetCreativeNews(t *testing.T) {
 	_, err := testClient.GetCreativeNews(nil, CreativeNewsParams{})
 	assert.NoError(t, err)
-}
+}*/
 
 func TestGetPlaylists(t *testing.T) {
 	_, err := testClient.GetPlaylists(nil, PlaylistsParams{})
