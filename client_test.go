@@ -13,9 +13,15 @@ import (
 var testClient *Client
 
 const (
-	testCosmetic    = "Peely"
+	testCosmeticName = "Peely"
+	testCosmeticID1  = "CID_349_Athena_Commando_M_Banana"
+	testCosmeticID2  = "CID_049_Athena_Commando_M_HolidayGingerbread"
+
+	testStatsName = "BurakYhs"
+	testStatsID   = "05006cb489c347beaad83551a1b9544e"
+
+	testPlaylistID  = "Playlist_DefaultSolo"
 	testCreatorCode = "Ninja"
-	testStats       = "BurakYhs"
 )
 
 func requireAPIKey(t *testing.T) {
@@ -99,12 +105,13 @@ func TestGetBeanCosmeticsList(t *testing.T) {
 }
 
 func TestSearchBRCosmetic(t *testing.T) {
-	_, err := testClient.SearchBRCosmetic(nil, BRCosmeticSearchParams{Name: testCosmetic})
+	resp, err := testClient.SearchBRCosmetic(nil, BRCosmeticSearchParams{Name: testCosmeticName})
 	assert.NoError(t, err)
+	assert.Equal(t, testCosmeticName, resp.Name)
 }
 
 func TestSearchBRCosmetics(t *testing.T) {
-	_, err := testClient.SearchBRCosmetics(nil, BRCosmeticSearchAllParams{Name: testCosmetic})
+	_, err := testClient.SearchBRCosmetics(nil, BRCosmeticSearchAllParams{Name: testCosmeticName})
 	assert.NoError(t, err)
 }
 
@@ -144,11 +151,9 @@ func TestGetPlaylists(t *testing.T) {
 }
 
 func TestGetPlaylistByID(t *testing.T) {
-	playlists, err := testClient.GetPlaylists(nil, PlaylistsParams{})
+	resp, err := testClient.GetPlaylistByID(nil, testPlaylistID, PlaylistByIDParams{})
 	assert.NoError(t, err)
-
-	_, err = testClient.GetPlaylistByID(nil, playlists[0].ID, PlaylistByIDParams{})
-	assert.NoError(t, err)
+	assert.Equal(t, testPlaylistID, resp.ID)
 }
 
 func TestGetShop(t *testing.T) {
@@ -159,39 +164,31 @@ func TestGetShop(t *testing.T) {
 func TestGetBRStatsByName(t *testing.T) {
 	requireAPIKey(t)
 
-	_, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStats})
+	_, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStatsName})
 	assert.NoError(t, err)
 }
 
 func TestGetBRStatsByAccountID(t *testing.T) {
 	requireAPIKey(t)
 
-	stats, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStats})
-	noErr := assert.NoError(t, err)
-
-	if !noErr {
-		return
-	}
-
-	id := stats.Account.ID
-	_, err = testClient.GetBRStatsByAccountID(nil, id, BRStatsByIDParams{})
+	_, err := testClient.GetBRStatsByAccountID(nil, testStatsID, BRStatsByIDParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBRCosmeticByID(t *testing.T) {
-	list, err := testClient.GetBRCosmeticsList(nil, BRCosmeticsListParams{})
+	resp, err := testClient.GetBRCosmeticByID(nil, testCosmeticID1, BRCosmeticByIDParams{})
 	assert.NoError(t, err)
-
-	_, err = testClient.GetBRCosmeticByID(nil, list[0].ID, BRCosmeticByIDParams{})
-	assert.NoError(t, err)
+	assert.Equal(t, testCosmeticID1, resp.ID)
 }
 
 func TestGetBRCosmeticByIDs(t *testing.T) {
-	list, err := testClient.GetBRCosmeticsList(nil, BRCosmeticsListParams{})
-	assert.NoError(t, err)
-
-	ids := []string{list[0].ID, list[1].ID}
+	ids := []string{testCosmeticID1, testCosmeticID2}
 	resp, err := testClient.GetBRCosmeticByIDs(nil, ids, BRCosmeticsByIDsParams{})
+
 	assert.NoError(t, err)
 	assert.Len(t, resp, 2)
+
+	for _, cosmetic := range resp {
+		assert.Contains(t, ids, cosmetic.ID)
+	}
 }
