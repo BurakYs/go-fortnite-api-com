@@ -37,6 +37,15 @@ type APIResponse struct {
 	Error  string          `json:"error,omitempty"`
 }
 
+type APIError struct {
+	Status  int    `json:"status"`
+	Message string `json:"error"`
+}
+
+func (e *APIError) Error() string {
+	return fmt.Sprintf("api error: %d - %s", e.Status, e.Message)
+}
+
 func NewClient(language Language, apiKey string) *Client {
 	return &Client{
 		HTTPClient: &http.Client{Timeout: 30 * time.Second},
@@ -95,7 +104,7 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query any, 
 	}
 
 	if len(bodyBytes) == 0 {
-		return fmt.Errorf("failed with status %d", resp.StatusCode)
+		return fmt.Errorf("empty response body, status: %d", resp.StatusCode)
 	}
 
 	var apiResp APIResponse
@@ -104,7 +113,10 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query any, 
 	}
 
 	if apiResp.Status != http.StatusOK {
-		return fmt.Errorf("api error: %s", apiResp.Error)
+		return &APIError{
+			Status:  apiResp.Status,
+			Message: apiResp.Error,
+		}
 	}
 
 	if result != nil && len(apiResp.Data) > 0 {
