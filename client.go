@@ -336,7 +336,7 @@ func (c *Client) GetBRStatsByAccountID(ctx context.Context, accountID string, pa
 }
 
 func structToQuery(query any, defaultLanguage Language) url.Values {
-	var values url.Values
+	values := url.Values{}
 	if query == nil {
 		return values
 	}
