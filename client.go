@@ -110,9 +110,9 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query, body
 		return fmt.Errorf("unmarshal wrapper: %w", err)
 	}
 
-	if apiResp.Status != http.StatusOK {
+	if resp.StatusCode != http.StatusOK {
 		return &APIError{
-			Status:  apiResp.Status,
+			Status:  resp.StatusCode,
 			Message: apiResp.Error,
 		}
 	}
