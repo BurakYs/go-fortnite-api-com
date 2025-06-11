@@ -29,7 +29,6 @@ import (
 
 func main() {
 	client := fortniteapi.NewClient(fortniteapi.LanguageEnglish, "your-api-key")
-	// You can use `client.SetContext()` to set a default context for all requests
 
 	flags := fortniteapi.CombineFlags(
 		fortniteapi.FlagIncludePaths,

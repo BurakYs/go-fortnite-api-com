@@ -28,7 +28,6 @@ type Client struct {
 	HTTPClient *http.Client
 	Language
 	APIKey string
-	ctx    context.Context
 }
 
 type APIResponse struct {
@@ -51,11 +50,10 @@ func NewClient(language Language, apiKey string) *Client {
 		HTTPClient: &http.Client{Timeout: 30 * time.Second},
 		Language:   language,
 		APIKey:     apiKey,
-		ctx:        context.Background(),
 	}
 }
 
-func (c *Client) fetch(ctx context.Context, method, endpoint string, query any, body any, result any) error {
+func (c *Client) fetch(ctx context.Context, method, endpoint string, query, body, result any) error {
 	u, err := url.Parse(BaseURL + endpoint)
 	if err != nil {
 		return fmt.Errorf("parse URL: %w", err)
@@ -76,7 +74,7 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query any, 
 		bodyReader = bytes.NewReader(jsonBytes)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, u.String(), bodyReader)
+	req, err := http.NewRequestWithContext(cmp.Or(ctx, context.Background()), method, u.String(), bodyReader)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -129,7 +127,7 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query any, 
 }
 
 func (c *Client) get(ctx context.Context, endpoint string, params, result any) error {
-	return c.fetch(c.GetContext(ctx), "GET", endpoint, params, nil, result)
+	return c.fetch(ctx, "GET", endpoint, params, nil, result)
 }
 
 func (c *Client) checkAPIKey() error {
@@ -140,88 +138,75 @@ func (c *Client) checkAPIKey() error {
 	return nil
 }
 
-func (c *Client) SetContext(ctx context.Context) {
-	if ctx == nil {
-		c.ctx = context.Background()
-		return
-	}
-
-	c.ctx = ctx
-}
-
-func (c *Client) GetContext(ctx context.Context) context.Context {
-	return cmp.Or(ctx, c.ctx, context.Background())
-}
-
 func (c *Client) GetAESKey(ctx context.Context, params AESKeyParams) (AESKeyResponse, error) {
 	var result AESKeyResponse
-	err := c.get(c.GetContext(ctx), "/v2/aes", params, &result)
+	err := c.get(ctx, "/v2/aes", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBanners(ctx context.Context, params BannersParams) (BannersResponse, error) {
 	var result BannersResponse
-	err := c.get(c.GetContext(ctx), "/v1/banners", params, &result)
+	err := c.get(ctx, "/v1/banners", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBannerColors(ctx context.Context) (BannerColorsResponse, error) {
 	var result BannerColorsResponse
-	err := c.get(c.GetContext(ctx), "/v1/banners/colors", nil, &result)
+	err := c.get(ctx, "/v1/banners/colors", nil, &result)
 	return result, err
 }
 
 func (c *Client) GetAllCosmetics(ctx context.Context, params AllCosmeticsParams) (AllCosmeticsResponse, error) {
 	var result AllCosmeticsResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics", params, &result)
+	err := c.get(ctx, "/v2/cosmetics", params, &result)
 	return result, err
 }
 
 func (c *Client) GetNewCosmetics(ctx context.Context, params NewCosmeticsParams) (NewCosmeticsResponse, error) {
 	var result NewCosmeticsResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/new", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/new", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRCosmeticsList(ctx context.Context, params BRCosmeticsListParams) (BRCosmeticsListResponse, error) {
 	var result BRCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/br", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/br", params, &result)
 	return result, err
 }
 
 func (c *Client) GetTrackCosmeticsList(ctx context.Context, params TrackCosmeticsListParams) (TrackCosmeticsListResponse, error) {
 	var result TrackCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/tracks", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/tracks", params, &result)
 	return result, err
 }
 
 func (c *Client) GetInstrumentCosmeticsList(ctx context.Context, params InstrumentCosmeticsListParams) (InstrumentCosmeticsListResponse, error) {
 	var result InstrumentCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/instruments", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/instruments", params, &result)
 	return result, err
 }
 
 func (c *Client) GetCarCosmeticsList(ctx context.Context, params CarCosmeticsListParams) (CarCosmeticsListResponse, error) {
 	var result CarCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/cars", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/cars", params, &result)
 	return result, err
 }
 
 func (c *Client) GetLegoCosmeticsList(ctx context.Context, params LegoCosmeticsListParams) (LegoCosmeticsListResponse, error) {
 	var result LegoCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/lego", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/lego", params, &result)
 	return result, err
 }
 
 func (c *Client) GetLegoKitCosmeticsList(ctx context.Context, params LegoKitCosmeticsListParams) (LegoKitCosmeticsListResponse, error) {
 	var result LegoKitCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/lego/kits", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/lego/kits", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBeanCosmeticsList(ctx context.Context, params BeanCosmeticsListParams) (BeanCosmeticsListResponse, error) {
 	var result BeanCosmeticsListResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/beans", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/beans", params, &result)
 	return result, err
 }
 
@@ -237,13 +222,13 @@ func (c *Client) GetBRCosmeticByID(ctx context.Context, cosmeticID string, param
 
 func (c *Client) SearchBRCosmetic(ctx context.Context, params BRCosmeticSearchParams) (BRCosmeticSearchResponse, error) {
 	var result BRCosmeticSearchResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/br/search", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/br/search", params, &result)
 	return result, err
 }
 
 func (c *Client) SearchBRCosmetics(ctx context.Context, params BRCosmeticSearchAllParams) (BRCosmeticSearchAllResponse, error) {
 	var result BRCosmeticSearchAllResponse
-	err := c.get(c.GetContext(ctx), "/v2/cosmetics/br/search/all", params, &result)
+	err := c.get(ctx, "/v2/cosmetics/br/search/all", params, &result)
 	return result, err
 }
 
@@ -254,49 +239,49 @@ func (c *Client) GetBRCosmeticByIDs(ctx context.Context, ids []string, params BR
 		return result, ErrEmptyID
 	}
 
-	err := c.fetch(c.GetContext(ctx), "POST", "/v2/cosmetics/br/search/ids", params, ids, &result)
+	err := c.fetch(ctx, "POST", "/v2/cosmetics/br/search/ids", params, ids, &result)
 	return result, err
 }
 
 func (c *Client) GetCreatorCode(ctx context.Context, params CreatorCodeParams) (CreatorCodeResponse, error) {
 	var result CreatorCodeResponse
-	err := c.get(c.GetContext(ctx), "/v2/creatorcode", params, &result)
+	err := c.get(ctx, "/v2/creatorcode", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRMap(ctx context.Context, params BRMapParams) (BRMapResponse, error) {
 	var result BRMapResponse
-	err := c.get(c.GetContext(ctx), "/v1/map", params, &result)
+	err := c.get(ctx, "/v1/map", params, &result)
 	return result, err
 }
 
 func (c *Client) GetAllNews(ctx context.Context, params AllNewsParams) (AllNewsResponse, error) {
 	var result AllNewsResponse
-	err := c.get(c.GetContext(ctx), "/v2/news", params, &result)
+	err := c.get(ctx, "/v2/news", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRNews(ctx context.Context, params BRNewsParams) (BRNewsResponse, error) {
 	var result BRNewsResponse
-	err := c.get(c.GetContext(ctx), "/v2/news/br", params, &result)
+	err := c.get(ctx, "/v2/news/br", params, &result)
 	return result, err
 }
 
 func (c *Client) GetSTWNews(ctx context.Context, params STWNewsParams) (STWNewsResponse, error) {
 	var result STWNewsResponse
-	err := c.get(c.GetContext(ctx), "/v2/news/stw", params, &result)
+	err := c.get(ctx, "/v2/news/stw", params, &result)
 	return result, err
 }
 
 func (c *Client) GetCreativeNews(ctx context.Context, params CreativeNewsParams) (CreativeNewsResponse, error) {
 	var result CreativeNewsResponse
-	err := c.get(c.GetContext(ctx), "/v2/news/creative", params, &result)
+	err := c.get(ctx, "/v2/news/creative", params, &result)
 	return result, err
 }
 
 func (c *Client) GetPlaylists(ctx context.Context, params PlaylistsParams) (PlaylistsResponse, error) {
 	var result PlaylistsResponse
-	err := c.get(c.GetContext(ctx), "/v1/playlists", params, &result)
+	err := c.get(ctx, "/v1/playlists", params, &result)
 	return result, err
 }
 
@@ -312,7 +297,7 @@ func (c *Client) GetPlaylistByID(ctx context.Context, playlistID string, params 
 
 func (c *Client) GetShop(ctx context.Context, params ShopParams) (ShopResponse, error) {
 	var result ShopResponse
-	err := c.get(c.GetContext(ctx), "/v2/shop", params, &result)
+	err := c.get(ctx, "/v2/shop", params, &result)
 	return result, err
 }
 
@@ -322,7 +307,7 @@ func (c *Client) GetBRStatsByName(ctx context.Context, params BRStatsByNameParam
 	}
 
 	var result BRStatsByNameResponse
-	err := c.get(c.GetContext(ctx), "/v2/stats/br/v2", params, &result)
+	err := c.get(ctx, "/v2/stats/br/v2", params, &result)
 	return result, err
 }
 

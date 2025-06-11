@@ -39,18 +39,17 @@ func TestMain(m *testing.M) {
 	}
 
 	testClient = NewClient(LanguageEnglish, apiKey)
-	testClient.SetContext(context.TODO())
 
 	os.Exit(m.Run())
 }
 
 func TestGetAESKey(t *testing.T) {
-	_, err := testClient.GetAESKey(nil, AESKeyParams{})
+	_, err := testClient.GetAESKey(context.Background(), AESKeyParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBanners(t *testing.T) {
-	_, err := testClient.GetBanners(nil, BannersParams{})
+	_, err := testClient.GetBanners(context.Background(), BannersParams{})
 	assert.NoError(t, err)
 }
 
@@ -60,130 +59,130 @@ func TestGetBannerColors(t *testing.T) {
 }
 
 func TestGetAllCosmetics(t *testing.T) {
-	_, err := testClient.GetAllCosmetics(nil, AllCosmeticsParams{})
+	_, err := testClient.GetAllCosmetics(context.Background(), AllCosmeticsParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetNewCosmetics(t *testing.T) {
-	_, err := testClient.GetNewCosmetics(nil, NewCosmeticsParams{})
+	_, err := testClient.GetNewCosmetics(context.Background(), NewCosmeticsParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBRCosmeticsList(t *testing.T) {
-	_, err := testClient.GetBRCosmeticsList(nil, BRCosmeticsListParams{})
+	_, err := testClient.GetBRCosmeticsList(context.Background(), BRCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetTrackCosmeticsList(t *testing.T) {
-	_, err := testClient.GetTrackCosmeticsList(nil, TrackCosmeticsListParams{})
+	_, err := testClient.GetTrackCosmeticsList(context.Background(), TrackCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetInstrumentCosmeticsList(t *testing.T) {
-	_, err := testClient.GetInstrumentCosmeticsList(nil, InstrumentCosmeticsListParams{})
+	_, err := testClient.GetInstrumentCosmeticsList(context.Background(), InstrumentCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetCarCosmeticsList(t *testing.T) {
-	_, err := testClient.GetCarCosmeticsList(nil, CarCosmeticsListParams{})
+	_, err := testClient.GetCarCosmeticsList(context.Background(), CarCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetLegoCosmeticsList(t *testing.T) {
-	_, err := testClient.GetLegoCosmeticsList(nil, LegoCosmeticsListParams{})
+	_, err := testClient.GetLegoCosmeticsList(context.Background(), LegoCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetLegoKitCosmeticsList(t *testing.T) {
-	_, err := testClient.GetLegoKitCosmeticsList(nil, LegoKitCosmeticsListParams{})
+	_, err := testClient.GetLegoKitCosmeticsList(context.Background(), LegoKitCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBeanCosmeticsList(t *testing.T) {
-	_, err := testClient.GetBeanCosmeticsList(nil, BeanCosmeticsListParams{})
+	_, err := testClient.GetBeanCosmeticsList(context.Background(), BeanCosmeticsListParams{})
 	assert.NoError(t, err)
 }
 
 func TestSearchBRCosmetic(t *testing.T) {
-	resp, err := testClient.SearchBRCosmetic(nil, BRCosmeticSearchParams{Name: testCosmeticName})
+	resp, err := testClient.SearchBRCosmetic(context.Background(), BRCosmeticSearchParams{Name: testCosmeticName})
 	assert.NoError(t, err)
 	assert.Equal(t, testCosmeticName, resp.Name)
 }
 
 func TestSearchBRCosmetics(t *testing.T) {
-	_, err := testClient.SearchBRCosmetics(nil, BRCosmeticSearchAllParams{Name: testCosmeticName})
+	_, err := testClient.SearchBRCosmetics(context.Background(), BRCosmeticSearchAllParams{Name: testCosmeticName})
 	assert.NoError(t, err)
 }
 
 func TestGetCreatorCode(t *testing.T) {
-	_, err := testClient.GetCreatorCode(nil, CreatorCodeParams{Name: testCreatorCode})
+	_, err := testClient.GetCreatorCode(context.Background(), CreatorCodeParams{Name: testCreatorCode})
 	assert.NoError(t, err)
 }
 
 func TestGetBRMap(t *testing.T) {
-	_, err := testClient.GetBRMap(nil, BRMapParams{})
+	_, err := testClient.GetBRMap(context.Background(), BRMapParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetNews(t *testing.T) {
-	_, err := testClient.GetAllNews(nil, AllNewsParams{})
+	_, err := testClient.GetAllNews(context.Background(), AllNewsParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBRNews(t *testing.T) {
-	_, err := testClient.GetBRNews(nil, BRNewsParams{})
+	_, err := testClient.GetBRNews(context.Background(), BRNewsParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetSTWNews(t *testing.T) {
-	_, err := testClient.GetSTWNews(nil, STWNewsParams{})
+	_, err := testClient.GetSTWNews(context.Background(), STWNewsParams{})
 	assert.NoError(t, err)
 }
 
 /*func TestGetCreativeNews(t *testing.T) {
-	_, err := testClient.GetCreativeNews(nil, CreativeNewsParams{})
+	_, err := testClient.GetCreativeNews(context.Background(), CreativeNewsParams{})
 	assert.NoError(t, err)
 }*/
 
 func TestGetPlaylists(t *testing.T) {
-	_, err := testClient.GetPlaylists(nil, PlaylistsParams{})
+	_, err := testClient.GetPlaylists(context.Background(), PlaylistsParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetPlaylistByID(t *testing.T) {
-	resp, err := testClient.GetPlaylistByID(nil, testPlaylistID, PlaylistByIDParams{})
+	resp, err := testClient.GetPlaylistByID(context.Background(), testPlaylistID, PlaylistByIDParams{})
 	assert.NoError(t, err)
 	assert.Equal(t, testPlaylistID, resp.ID)
 }
 
 func TestGetShop(t *testing.T) {
-	_, err := testClient.GetShop(nil, ShopParams{})
+	_, err := testClient.GetShop(context.Background(), ShopParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBRStatsByName(t *testing.T) {
 	requireAPIKey(t)
 
-	_, err := testClient.GetBRStatsByName(nil, BRStatsByNameParams{Name: testStatsName})
+	_, err := testClient.GetBRStatsByName(context.Background(), BRStatsByNameParams{Name: testStatsName})
 	assert.NoError(t, err)
 }
 
 func TestGetBRStatsByAccountID(t *testing.T) {
 	requireAPIKey(t)
 
-	_, err := testClient.GetBRStatsByAccountID(nil, testStatsID, BRStatsByIDParams{})
+	_, err := testClient.GetBRStatsByAccountID(context.Background(), testStatsID, BRStatsByIDParams{})
 	assert.NoError(t, err)
 }
 
 func TestGetBRCosmeticByID(t *testing.T) {
-	resp, err := testClient.GetBRCosmeticByID(nil, testCosmeticID1, BRCosmeticByIDParams{})
+	resp, err := testClient.GetBRCosmeticByID(context.Background(), testCosmeticID1, BRCosmeticByIDParams{})
 	assert.NoError(t, err)
 	assert.Equal(t, testCosmeticID1, resp.ID)
 }
 
 func TestGetBRCosmeticByIDs(t *testing.T) {
 	ids := []string{testCosmeticID1, testCosmeticID2}
-	resp, err := testClient.GetBRCosmeticByIDs(nil, ids, BRCosmeticsByIDsParams{})
+	resp, err := testClient.GetBRCosmeticByIDs(context.Background(), ids, BRCosmeticsByIDsParams{})
 
 	assert.NoError(t, err)
 	assert.Len(t, resp, 2)
