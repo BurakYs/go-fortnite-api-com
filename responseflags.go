@@ -6,11 +6,6 @@ type ResponseFlagsParams struct {
 	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
 }
 
-type LanguageAndFlagsParams struct {
-	Language      Language     `url:"language,omitempty"`
-	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
-}
-
 const (
 	FlagIncludePaths ResponseFlag = 1 << iota
 	FlagIncludeGameplayTags

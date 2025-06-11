@@ -4,7 +4,8 @@ type AESKeyParams struct {
 	// Enum: "aes", "hex"
 	//
 	// Default: "hex"
-	KeyFormat string `url:"keyFormat"`
+	KeyFormat     string       `url:"keyFormat"`
+	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
 }
 
 type AESDynamicKey struct {

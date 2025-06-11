@@ -103,6 +103,12 @@ func TestGetBeanCosmeticsList(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestGetBRCosmeticByID(t *testing.T) {
+	resp, err := testClient.GetBRCosmeticByID(context.Background(), testCosmeticID1, BRCosmeticByIDParams{})
+	assert.NoError(t, err)
+	assert.Equal(t, testCosmeticID1, resp.ID)
+}
+
 func TestSearchBRCosmetic(t *testing.T) {
 	resp, err := testClient.SearchBRCosmetic(context.Background(), BRCosmeticSearchParams{Name: testCosmeticName})
 	assert.NoError(t, err)
@@ -112,6 +118,18 @@ func TestSearchBRCosmetic(t *testing.T) {
 func TestSearchBRCosmetics(t *testing.T) {
 	_, err := testClient.SearchBRCosmetics(context.Background(), BRCosmeticSearchAllParams{Name: testCosmeticName})
 	assert.NoError(t, err)
+}
+
+func SearchBRCosmeticByIDs(t *testing.T) {
+	ids := []string{testCosmeticID1, testCosmeticID2}
+	resp, err := testClient.SearchBRCosmeticByIDs(context.Background(), ids, BRCosmeticsByIDsParams{})
+
+	assert.NoError(t, err)
+	assert.Len(t, resp, 2)
+
+	for _, cosmetic := range resp {
+		assert.Contains(t, ids, cosmetic.ID)
+	}
 }
 
 func TestGetCreatorCode(t *testing.T) {
@@ -125,7 +143,7 @@ func TestGetBRMap(t *testing.T) {
 }
 
 func TestGetNews(t *testing.T) {
-	_, err := testClient.GetAllNews(context.Background(), AllNewsParams{})
+	_, err := testClient.GetNews(context.Background(), AllNewsParams{})
 	assert.NoError(t, err)
 }
 
@@ -172,22 +190,4 @@ func TestGetBRStatsByAccountID(t *testing.T) {
 
 	_, err := testClient.GetBRStatsByAccountID(context.Background(), testStatsID, BRStatsByIDParams{})
 	assert.NoError(t, err)
-}
-
-func TestGetBRCosmeticByID(t *testing.T) {
-	resp, err := testClient.GetBRCosmeticByID(context.Background(), testCosmeticID1, BRCosmeticByIDParams{})
-	assert.NoError(t, err)
-	assert.Equal(t, testCosmeticID1, resp.ID)
-}
-
-func TestGetBRCosmeticByIDs(t *testing.T) {
-	ids := []string{testCosmeticID1, testCosmeticID2}
-	resp, err := testClient.GetBRCosmeticByIDs(context.Background(), ids, BRCosmeticsByIDsParams{})
-
-	assert.NoError(t, err)
-	assert.Len(t, resp, 2)
-
-	for _, cosmetic := range resp {
-		assert.Contains(t, ids, cosmetic.ID)
-	}
 }

@@ -1,7 +1,8 @@
 package fortniteapi
 
 type CreatorCodeParams struct {
-	Name string `url:"name"`
+	Name          string       `url:"name"`
+	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
 }
 
 type CreatorCodeAccount struct {

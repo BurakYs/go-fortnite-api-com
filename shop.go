@@ -1,6 +1,6 @@
 package fortniteapi
 
-type ShopParams LanguageAndFlagsParams
+type ShopParams LanguageParams
 
 type ShopItemBundle struct {
 	Name  string `json:"name"`

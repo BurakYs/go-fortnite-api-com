@@ -209,7 +209,7 @@ type Bean struct {
 	Added        string     `json:"added"`
 }
 
-type AllCosmeticsParams LanguageAndFlagsParams
+type AllCosmeticsParams LanguageParams
 type AllCosmeticsResponse struct {
 	BR          []BRCosmetic `json:"br"`
 	Tracks      []Track      `json:"tracks"`
@@ -220,7 +220,7 @@ type AllCosmeticsResponse struct {
 	Beans       []Bean       `json:"beans"`
 }
 
-type NewCosmeticsParams LanguageAndFlagsParams
+type NewCosmeticsParams LanguageParams
 type NewCosmeticsHashes struct {
 	All         string `json:"all"`
 	BR          string `json:"br"`
@@ -252,25 +252,25 @@ type NewCosmeticsResponse struct {
 	Items         AllCosmeticsResponse      `json:"items"`
 }
 
-type BRCosmeticsListParams LanguageAndFlagsParams
+type BRCosmeticsListParams LanguageParams
 type BRCosmeticsListResponse []BRCosmetic
 
 type TrackCosmeticsListParams ResponseFlagsParams
 type TrackCosmeticsListResponse []Track
 
-type InstrumentCosmeticsListParams LanguageAndFlagsParams
+type InstrumentCosmeticsListParams LanguageParams
 type InstrumentCosmeticsListResponse []Instrument
 
-type CarCosmeticsListParams LanguageAndFlagsParams
+type CarCosmeticsListParams LanguageParams
 type CarCosmeticsListResponse []Car
 
 type LegoCosmeticsListParams ResponseFlagsParams
 type LegoCosmeticsListResponse []Lego
 
-type LegoKitCosmeticsListParams LanguageAndFlagsParams
+type LegoKitCosmeticsListParams LanguageParams
 type LegoKitCosmeticsListResponse []LegoKit
 
-type BeanCosmeticsListParams LanguageAndFlagsParams
+type BeanCosmeticsListParams LanguageParams
 type BeanCosmeticsListResponse []Bean
 
 type BRCosmeticByIDParams LanguageParams
@@ -324,5 +324,5 @@ type BRCosmeticSearchResponse BRCosmetic
 type BRCosmeticSearchAllParams BRCosmeticSearchParams
 type BRCosmeticSearchAllResponse []BRCosmeticSearchResponse
 
-type BRCosmeticsByIDsParams LanguageAndFlagsParams
+type BRCosmeticsByIDsParams LanguageParams
 type BRCosmeticsByIDsResponse []BRCosmetic

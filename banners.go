@@ -1,6 +1,6 @@
 package fortniteapi
 
-type BannersParams LanguageAndFlagsParams
+type BannersParams LanguageParams
 
 type BannerImages struct {
 	SmallIcon string `json:"smallIcon"`

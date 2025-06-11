@@ -16,7 +16,8 @@ type BRStatsByNameParams struct {
 	// Enum: "all", "keyboardMouse", "gamepad", "touch"
 	//
 	// Default: *none*
-	Image *string `url:"image,omitempty"`
+	Image         string       `url:"image,omitempty"`
+	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
 }
 
 type BRStatsByIDParams struct {
@@ -28,7 +29,8 @@ type BRStatsByIDParams struct {
 	// Enum: "all", "keyboardMouse", "gamepad", "touch"
 	//
 	// Default: *none*
-	Image *string `url:"image,omitempty"`
+	Image         string       `url:"image,omitempty"`
+	ResponseFlags ResponseFlag `url:"responseFlags,omitempty"`
 }
 
 type BRStatsAccount struct {

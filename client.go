@@ -19,10 +19,7 @@ const (
 	BaseURL = "https://fortnite-api.com"
 )
 
-var (
-	ErrEmptyID  = fmt.Errorf("ID parameter cannot be empty")
-	ErrNoAPIKey = fmt.Errorf("an API key is required for this request")
-)
+var ErrNoAPIKey = fmt.Errorf("an API key is required for this request")
 
 type Client struct {
 	HTTPClient *http.Client
@@ -107,7 +104,7 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query, body
 
 	var apiResp APIResponse
 	if err := json.Unmarshal(bodyBytes, &apiResp); err != nil {
-		return fmt.Errorf("unmarshal wrapper: %w", err)
+		return fmt.Errorf("unmarshal response: %w", err)
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -212,8 +209,9 @@ func (c *Client) GetBeanCosmeticsList(ctx context.Context, params BeanCosmeticsL
 
 func (c *Client) GetBRCosmeticByID(ctx context.Context, cosmeticID string, params BRCosmeticByIDParams) (BRCosmeticByIDResponse, error) {
 	var result BRCosmeticByIDResponse
+
 	if cosmeticID == "" {
-		return result, ErrEmptyID
+		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
 	err := c.get(ctx, fmt.Sprintf("/v2/cosmetics/br/%s", cosmeticID), params, &result)
@@ -232,11 +230,11 @@ func (c *Client) SearchBRCosmetics(ctx context.Context, params BRCosmeticSearchA
 	return result, err
 }
 
-func (c *Client) GetBRCosmeticByIDs(ctx context.Context, ids []string, params BRCosmeticsByIDsParams) (BRCosmeticsByIDsResponse, error) {
+func (c *Client) SearchBRCosmeticByIDs(ctx context.Context, ids []string, params BRCosmeticsByIDsParams) (BRCosmeticsByIDsResponse, error) {
 	var result BRCosmeticsByIDsResponse
 
 	if len(ids) == 0 {
-		return result, ErrEmptyID
+		return result, fmt.Errorf("IDs parameter cannot be empty")
 	}
 
 	err := c.fetch(ctx, "POST", "/v2/cosmetics/br/search/ids", params, ids, &result)
@@ -245,6 +243,11 @@ func (c *Client) GetBRCosmeticByIDs(ctx context.Context, ids []string, params BR
 
 func (c *Client) GetCreatorCode(ctx context.Context, params CreatorCodeParams) (CreatorCodeResponse, error) {
 	var result CreatorCodeResponse
+
+	if params.Name == "" {
+		return result, fmt.Errorf("Name parameter cannot be empty")
+	}
+
 	err := c.get(ctx, "/v2/creatorcode", params, &result)
 	return result, err
 }
@@ -255,7 +258,7 @@ func (c *Client) GetBRMap(ctx context.Context, params BRMapParams) (BRMapRespons
 	return result, err
 }
 
-func (c *Client) GetAllNews(ctx context.Context, params AllNewsParams) (AllNewsResponse, error) {
+func (c *Client) GetNews(ctx context.Context, params AllNewsParams) (AllNewsResponse, error) {
 	var result AllNewsResponse
 	err := c.get(ctx, "/v2/news", params, &result)
 	return result, err
@@ -287,8 +290,9 @@ func (c *Client) GetPlaylists(ctx context.Context, params PlaylistsParams) (Play
 
 func (c *Client) GetPlaylistByID(ctx context.Context, playlistID string, params PlaylistByIDParams) (PlaylistByIDResponse, error) {
 	var result PlaylistByIDResponse
+
 	if playlistID == "" {
-		return result, ErrEmptyID
+		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
 	err := c.get(ctx, fmt.Sprintf("/v1/playlists/%s", playlistID), params, &result)
@@ -302,23 +306,29 @@ func (c *Client) GetShop(ctx context.Context, params ShopParams) (ShopResponse, 
 }
 
 func (c *Client) GetBRStatsByName(ctx context.Context, params BRStatsByNameParams) (BRStatsByNameResponse, error) {
+	var result BRStatsByNameResponse
+
 	if err := c.checkAPIKey(); err != nil {
-		return BRStatsByNameResponse{}, err
+		return result, err
 	}
 
-	var result BRStatsByNameResponse
+	if params.Name == "" {
+		return result, fmt.Errorf("Name parameter cannot be empty")
+	}
+
 	err := c.get(ctx, "/v2/stats/br/v2", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRStatsByAccountID(ctx context.Context, accountID string, params BRStatsByIDParams) (BRStatsByIDResponse, error) {
+	var result BRStatsByIDResponse
+
 	if err := c.checkAPIKey(); err != nil {
-		return BRStatsByIDResponse{}, err
+		return result, err
 	}
 
-	var result BRStatsByIDResponse
 	if accountID == "" {
-		return result, ErrEmptyID
+		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
 	err := c.get(ctx, fmt.Sprintf("/v2/stats/br/v2/%s", accountID), params, &result)
@@ -326,7 +336,7 @@ func (c *Client) GetBRStatsByAccountID(ctx context.Context, accountID string, pa
 }
 
 func structToQuery(query any, defaultLanguage Language) url.Values {
-	values := url.Values{}
+	var values url.Values
 	if query == nil {
 		return values
 	}
