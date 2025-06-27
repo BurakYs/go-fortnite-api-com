@@ -35,7 +35,7 @@ func main() {
 		fortniteapi.FlagIncludeGameplayTags,
 	)
 
-	searchParams := fortniteapi.BRCosmeticSearchParams{
+	searchParams := fortniteapi.SearchBRCosmeticParams{
 		Name:          "Peely",
 		ResponseFlags: flags,
 	}

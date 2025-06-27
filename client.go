@@ -218,19 +218,19 @@ func (c *Client) GetBRCosmeticByID(ctx context.Context, cosmeticID string, param
 	return result, err
 }
 
-func (c *Client) SearchBRCosmetic(ctx context.Context, params BRCosmeticSearchParams) (BRCosmeticSearchResponse, error) {
-	var result BRCosmeticSearchResponse
+func (c *Client) SearchBRCosmetic(ctx context.Context, params SearchBRCosmeticParams) (SearchBRCosmeticResponse, error) {
+	var result SearchBRCosmeticResponse
 	err := c.get(ctx, "/v2/cosmetics/br/search", params, &result)
 	return result, err
 }
 
-func (c *Client) SearchBRCosmetics(ctx context.Context, params BRCosmeticSearchAllParams) (BRCosmeticSearchAllResponse, error) {
-	var result BRCosmeticSearchAllResponse
+func (c *Client) SearchBRCosmetics(ctx context.Context, params SearchBRCosmeticsParams) (SearchBRCosmeticsResponse, error) {
+	var result SearchBRCosmeticsResponse
 	err := c.get(ctx, "/v2/cosmetics/br/search/all", params, &result)
 	return result, err
 }
 
-func (c *Client) SearchBRCosmeticByIDs(ctx context.Context, ids []string, params BRCosmeticsByIDsParams) (BRCosmeticsByIDsResponse, error) {
+func (c *Client) SearchBRCosmeticsByIDs(ctx context.Context, ids []string, params BRCosmeticsByIDsParams) (BRCosmeticsByIDsResponse, error) {
 	var result BRCosmeticsByIDsResponse
 
 	if len(ids) == 0 {

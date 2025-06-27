@@ -110,19 +110,19 @@ func TestGetBRCosmeticByID(t *testing.T) {
 }
 
 func TestSearchBRCosmetic(t *testing.T) {
-	resp, err := testClient.SearchBRCosmetic(context.Background(), BRCosmeticSearchParams{Name: testCosmeticName})
+	resp, err := testClient.SearchBRCosmetic(context.Background(), SearchBRCosmeticParams{Name: testCosmeticName})
 	assert.NoError(t, err)
 	assert.Equal(t, testCosmeticName, resp.Name)
 }
 
 func TestSearchBRCosmetics(t *testing.T) {
-	_, err := testClient.SearchBRCosmetics(context.Background(), BRCosmeticSearchAllParams{Name: testCosmeticName})
+	_, err := testClient.SearchBRCosmetics(context.Background(), SearchBRCosmeticsParams{Name: testCosmeticName})
 	assert.NoError(t, err)
 }
 
-func SearchBRCosmeticByIDs(t *testing.T) {
+func TestSearchBRCosmeticsByIDs(t *testing.T) {
 	ids := []string{testCosmeticID1, testCosmeticID2}
-	resp, err := testClient.SearchBRCosmeticByIDs(context.Background(), ids, BRCosmeticsByIDsParams{})
+	resp, err := testClient.SearchBRCosmeticsByIDs(context.Background(), ids, BRCosmeticsByIDsParams{})
 
 	assert.NoError(t, err)
 	assert.Len(t, resp, 2)

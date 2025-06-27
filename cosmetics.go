@@ -276,7 +276,7 @@ type BeanCosmeticsListResponse []Bean
 type BRCosmeticByIDParams LanguageParams
 type BRCosmeticByIDResponse BRCosmetic
 
-type BRCosmeticSearchParams struct {
+type SearchBRCosmeticParams struct {
 	Language       Language `url:"language,omitempty"`
 	SearchLanguage Language `url:"searchLanguage,omitempty"`
 
@@ -319,10 +319,10 @@ type BRCosmeticSearchParams struct {
 	ResponseFlags       ResponseFlag `url:"responseFlags,omitempty"`
 }
 
-type BRCosmeticSearchResponse BRCosmetic
+type SearchBRCosmeticResponse BRCosmetic
 
-type BRCosmeticSearchAllParams BRCosmeticSearchParams
-type BRCosmeticSearchAllResponse []BRCosmeticSearchResponse
+type SearchBRCosmeticsParams SearchBRCosmeticParams
+type SearchBRCosmeticsResponse []SearchBRCosmeticResponse
 
 type BRCosmeticsByIDsParams LanguageParams
 type BRCosmeticsByIDsResponse []BRCosmetic
