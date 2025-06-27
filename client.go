@@ -9,8 +9,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"reflect"
-	"strings"
 	"time"
 )
 
@@ -20,12 +18,6 @@ const (
 )
 
 var ErrNoAPIKey = fmt.Errorf("an API key is required for this request")
-
-type Client struct {
-	HTTPClient *http.Client
-	Language
-	APIKey string
-}
 
 type APIResponse struct {
 	Status int             `json:"status"`
@@ -42,6 +34,12 @@ func (e *APIError) Error() string {
 	return fmt.Sprintf("api error: %d - %s", e.Status, e.Message)
 }
 
+type Client struct {
+	HTTPClient *http.Client
+	Language
+	APIKey string
+}
+
 func NewClient(language Language, apiKey string) *Client {
 	return &Client{
 		HTTPClient: &http.Client{Timeout: 30 * time.Second},
@@ -50,13 +48,17 @@ func NewClient(language Language, apiKey string) *Client {
 	}
 }
 
-func (c *Client) fetch(ctx context.Context, method, endpoint string, query, body, result any) error {
+func (c *Client) Fetch(ctx context.Context, method, endpoint string, query, body, result any) error {
 	u, err := url.Parse(BaseURL + endpoint)
 	if err != nil {
 		return fmt.Errorf("parse URL: %w", err)
 	}
 
-	params := structToQuery(query, c.Language)
+	params, err := structToQuery(query, c.Language)
+	if err != nil {
+		return fmt.Errorf("query conversion: %w", err)
+	}
+
 	if len(params) > 0 {
 		u.RawQuery = params.Encode()
 	}
@@ -123,8 +125,8 @@ func (c *Client) fetch(ctx context.Context, method, endpoint string, query, body
 	return nil
 }
 
-func (c *Client) get(ctx context.Context, endpoint string, params, result any) error {
-	return c.fetch(ctx, "GET", endpoint, params, nil, result)
+func (c *Client) Get(ctx context.Context, endpoint string, params, result any) error {
+	return c.Fetch(ctx, "GET", endpoint, params, nil, result)
 }
 
 func (c *Client) checkAPIKey() error {
@@ -137,73 +139,73 @@ func (c *Client) checkAPIKey() error {
 
 func (c *Client) GetAESKey(ctx context.Context, params AESKeyParams) (AESKeyResponse, error) {
 	var result AESKeyResponse
-	err := c.get(ctx, "/v2/aes", params, &result)
+	err := c.Get(ctx, "/v2/aes", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBanners(ctx context.Context, params BannersParams) (BannersResponse, error) {
 	var result BannersResponse
-	err := c.get(ctx, "/v1/banners", params, &result)
+	err := c.Get(ctx, "/v1/banners", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBannerColors(ctx context.Context) (BannerColorsResponse, error) {
 	var result BannerColorsResponse
-	err := c.get(ctx, "/v1/banners/colors", nil, &result)
+	err := c.Get(ctx, "/v1/banners/colors", nil, &result)
 	return result, err
 }
 
 func (c *Client) GetAllCosmetics(ctx context.Context, params AllCosmeticsParams) (AllCosmeticsResponse, error) {
 	var result AllCosmeticsResponse
-	err := c.get(ctx, "/v2/cosmetics", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics", params, &result)
 	return result, err
 }
 
 func (c *Client) GetNewCosmetics(ctx context.Context, params NewCosmeticsParams) (NewCosmeticsResponse, error) {
 	var result NewCosmeticsResponse
-	err := c.get(ctx, "/v2/cosmetics/new", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/new", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRCosmeticsList(ctx context.Context, params BRCosmeticsListParams) (BRCosmeticsListResponse, error) {
 	var result BRCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/br", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/br", params, &result)
 	return result, err
 }
 
 func (c *Client) GetTrackCosmeticsList(ctx context.Context, params TrackCosmeticsListParams) (TrackCosmeticsListResponse, error) {
 	var result TrackCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/tracks", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/tracks", params, &result)
 	return result, err
 }
 
 func (c *Client) GetInstrumentCosmeticsList(ctx context.Context, params InstrumentCosmeticsListParams) (InstrumentCosmeticsListResponse, error) {
 	var result InstrumentCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/instruments", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/instruments", params, &result)
 	return result, err
 }
 
 func (c *Client) GetCarCosmeticsList(ctx context.Context, params CarCosmeticsListParams) (CarCosmeticsListResponse, error) {
 	var result CarCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/cars", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/cars", params, &result)
 	return result, err
 }
 
 func (c *Client) GetLegoCosmeticsList(ctx context.Context, params LegoCosmeticsListParams) (LegoCosmeticsListResponse, error) {
 	var result LegoCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/lego", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/lego", params, &result)
 	return result, err
 }
 
 func (c *Client) GetLegoKitCosmeticsList(ctx context.Context, params LegoKitCosmeticsListParams) (LegoKitCosmeticsListResponse, error) {
 	var result LegoKitCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/lego/kits", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/lego/kits", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBeanCosmeticsList(ctx context.Context, params BeanCosmeticsListParams) (BeanCosmeticsListResponse, error) {
 	var result BeanCosmeticsListResponse
-	err := c.get(ctx, "/v2/cosmetics/beans", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/beans", params, &result)
 	return result, err
 }
 
@@ -214,19 +216,19 @@ func (c *Client) GetBRCosmeticByID(ctx context.Context, cosmeticID string, param
 		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
-	err := c.get(ctx, fmt.Sprintf("/v2/cosmetics/br/%s", cosmeticID), params, &result)
+	err := c.Get(ctx, fmt.Sprintf("/v2/cosmetics/br/%s", cosmeticID), params, &result)
 	return result, err
 }
 
 func (c *Client) SearchBRCosmetic(ctx context.Context, params SearchBRCosmeticParams) (SearchBRCosmeticResponse, error) {
 	var result SearchBRCosmeticResponse
-	err := c.get(ctx, "/v2/cosmetics/br/search", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/br/search", params, &result)
 	return result, err
 }
 
 func (c *Client) SearchBRCosmetics(ctx context.Context, params SearchBRCosmeticsParams) (SearchBRCosmeticsResponse, error) {
 	var result SearchBRCosmeticsResponse
-	err := c.get(ctx, "/v2/cosmetics/br/search/all", params, &result)
+	err := c.Get(ctx, "/v2/cosmetics/br/search/all", params, &result)
 	return result, err
 }
 
@@ -237,7 +239,7 @@ func (c *Client) SearchBRCosmeticsByIDs(ctx context.Context, ids []string, param
 		return result, fmt.Errorf("IDs parameter cannot be empty")
 	}
 
-	err := c.fetch(ctx, "POST", "/v2/cosmetics/br/search/ids", params, ids, &result)
+	err := c.Fetch(ctx, "POST", "/v2/cosmetics/br/search/ids", params, ids, &result)
 	return result, err
 }
 
@@ -248,43 +250,43 @@ func (c *Client) GetCreatorCode(ctx context.Context, params CreatorCodeParams) (
 		return result, fmt.Errorf("name parameter cannot be empty")
 	}
 
-	err := c.get(ctx, "/v2/creatorcode", params, &result)
+	err := c.Get(ctx, "/v2/creatorcode", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRMap(ctx context.Context, params BRMapParams) (BRMapResponse, error) {
 	var result BRMapResponse
-	err := c.get(ctx, "/v1/map", params, &result)
+	err := c.Get(ctx, "/v1/map", params, &result)
 	return result, err
 }
 
 func (c *Client) GetNews(ctx context.Context, params AllNewsParams) (AllNewsResponse, error) {
 	var result AllNewsResponse
-	err := c.get(ctx, "/v2/news", params, &result)
+	err := c.Get(ctx, "/v2/news", params, &result)
 	return result, err
 }
 
 func (c *Client) GetBRNews(ctx context.Context, params BRNewsParams) (BRNewsResponse, error) {
 	var result BRNewsResponse
-	err := c.get(ctx, "/v2/news/br", params, &result)
+	err := c.Get(ctx, "/v2/news/br", params, &result)
 	return result, err
 }
 
 func (c *Client) GetSTWNews(ctx context.Context, params STWNewsParams) (STWNewsResponse, error) {
 	var result STWNewsResponse
-	err := c.get(ctx, "/v2/news/stw", params, &result)
+	err := c.Get(ctx, "/v2/news/stw", params, &result)
 	return result, err
 }
 
 func (c *Client) GetCreativeNews(ctx context.Context, params CreativeNewsParams) (CreativeNewsResponse, error) {
 	var result CreativeNewsResponse
-	err := c.get(ctx, "/v2/news/creative", params, &result)
+	err := c.Get(ctx, "/v2/news/creative", params, &result)
 	return result, err
 }
 
 func (c *Client) GetPlaylists(ctx context.Context, params PlaylistsParams) (PlaylistsResponse, error) {
 	var result PlaylistsResponse
-	err := c.get(ctx, "/v1/playlists", params, &result)
+	err := c.Get(ctx, "/v1/playlists", params, &result)
 	return result, err
 }
 
@@ -295,13 +297,13 @@ func (c *Client) GetPlaylistByID(ctx context.Context, playlistID string, params 
 		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
-	err := c.get(ctx, fmt.Sprintf("/v1/playlists/%s", playlistID), params, &result)
+	err := c.Get(ctx, fmt.Sprintf("/v1/playlists/%s", playlistID), params, &result)
 	return result, err
 }
 
 func (c *Client) GetShop(ctx context.Context, params ShopParams) (ShopResponse, error) {
 	var result ShopResponse
-	err := c.get(ctx, "/v2/shop", params, &result)
+	err := c.Get(ctx, "/v2/shop", params, &result)
 	return result, err
 }
 
@@ -316,7 +318,7 @@ func (c *Client) GetBRStatsByName(ctx context.Context, params BRStatsByNameParam
 		return result, fmt.Errorf("name parameter cannot be empty")
 	}
 
-	err := c.get(ctx, "/v2/stats/br/v2", params, &result)
+	err := c.Get(ctx, "/v2/stats/br/v2", params, &result)
 	return result, err
 }
 
@@ -331,39 +333,6 @@ func (c *Client) GetBRStatsByAccountID(ctx context.Context, accountID string, pa
 		return result, fmt.Errorf("ID parameter cannot be empty")
 	}
 
-	err := c.get(ctx, fmt.Sprintf("/v2/stats/br/v2/%s", accountID), params, &result)
+	err := c.Get(ctx, fmt.Sprintf("/v2/stats/br/v2/%s", accountID), params, &result)
 	return result, err
-}
-
-func structToQuery(query any, defaultLanguage Language) url.Values {
-	values := url.Values{}
-	if query == nil {
-		return values
-	}
-
-	v := reflect.ValueOf(query)
-	t := reflect.TypeOf(query)
-
-	for i := range t.NumField() {
-		field := t.Field(i)
-		tag := field.Tag.Get("url")
-		if tag == "" {
-			tag = field.Name
-		} else {
-			tag = strings.Split(tag, ",")[0]
-		}
-
-		val := v.Field(i)
-		if val.IsZero() {
-			if tag == "language" {
-				values.Set(tag, string(defaultLanguage))
-			}
-
-			continue
-		}
-
-		values.Set(tag, fmt.Sprint(val.Interface()))
-	}
-
-	return values
 }
