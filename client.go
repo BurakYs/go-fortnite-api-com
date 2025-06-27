@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	Version = "1.0.0"
+	Version = "1.2.0"
 	BaseURL = "https://fortnite-api.com"
 )
 
@@ -245,7 +245,7 @@ func (c *Client) GetCreatorCode(ctx context.Context, params CreatorCodeParams) (
 	var result CreatorCodeResponse
 
 	if params.Name == "" {
-		return result, fmt.Errorf("Name parameter cannot be empty")
+		return result, fmt.Errorf("name parameter cannot be empty")
 	}
 
 	err := c.get(ctx, "/v2/creatorcode", params, &result)
@@ -313,7 +313,7 @@ func (c *Client) GetBRStatsByName(ctx context.Context, params BRStatsByNameParam
 	}
 
 	if params.Name == "" {
-		return result, fmt.Errorf("Name parameter cannot be empty")
+		return result, fmt.Errorf("name parameter cannot be empty")
 	}
 
 	err := c.get(ctx, "/v2/stats/br/v2", params, &result)
